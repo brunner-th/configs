@@ -30,7 +30,7 @@ return {
 				-- Add your preferred configuration here
 				view = {
 					width = 30,
-					side = "right",
+					side = "left",
 				},
 				renderer = {
 					--icons = {
@@ -45,6 +45,8 @@ return {
 			})
 		end,
 	},
-
+	{
+		"github/copilot.vim",
+	},
 	-- Other plugins ...
 }
