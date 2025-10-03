@@ -89,6 +89,7 @@ alias matlab="sh  //usr/local/MATLAB/R2023a/bin/matlab"
 alias paraview="~/Dev/Paraview/paraview_build/bin/paraview"
 alias zotero="sh ~/Dev/Zotero/Zotero_linux-x86_64/zotero"
 alias cfs="./Dev/openCFS/cfs/build/bin/cfs"
+alias copex="gh copilot explain"
 
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
@@ -142,10 +143,10 @@ unset __conda_setup
 
 export PATH="/usr/bin:$PATH"
 
-alias flexi='/home/thomas/Dev/flexi/flexi/build/bin/flexi'
+alias flexi='/home/thomas/Dev/flexi/flexi/bin/flexi'
 alias hopr='/home/thomas/Dev/hopr/hopr/build/bin/hopr'
-alias posti_visu='/home/thomas/Dev/flexi/flexi/build/bin/posti_visu'
-export PATH=$PATH:/home/thomas/Dev/flexi/flexi/build/bin
+alias posti_visu='/home/thomas/Dev/flexi/flexi/bin/posti_visu'
+export PATH=$PATH:/home/thomas/Dev/flexi/flexi/bin
 alias posti_preparerecordpoints='/home/thomas/Dev/flexi/flexi/build/bin/posti_preparerecordpoints'
 
 export KMT_MGLET_ROOT="/home/thomas/Dev/mglet/mglet-8.8"
@@ -155,20 +156,29 @@ alias gittree="git log --oneline --graph --decorate --all"
 
 # eval "$(fzf --bash)"
 
-export FZF_DEFAULT_COMMAND="find . -maxdepth 6"
-
+export FZF_DEFAULT_COMMAND="find . -maxdepth 4"
 
 fcd() {
   local target
-  target=$(find ~ \( -type d -o -type f \) 2>/dev/null | fzf) || return 1
+  target=$(find ~/Dev ~/Desktop \( -type d -o -type f \) 2>/dev/null | fzf) || return 1
   if [ -d "$target" ]; then
-    # If it's a directory, change into it
     cd "$target" || return 1
   else
-    # If it's a file, change into its parent directory
     cd "$(dirname "$target")" || return 1
   fi
 }
+
+#fcd() {
+#  local target
+#  target=$(find ~ \( -type d -o -type f \) 2>/dev/null | fzf) || return 1
+#  if [ -d "$target" ]; then
+    # If it's a directory, change into it
+#    cd "$target" || return 1
+#  else
+    # If it's a file, change into its parent directory
+#    cd "$(dirname "$target")" || return 1
+#  fi
+#}
 
 
 fcode() {
@@ -198,12 +208,47 @@ fh() {
 
 fnvim() {
   local target
-  target=$(find ~ \(-type f \) 2>/dev/null | fzf) || return 1
-
-    # Open the file's directory and the file in a new VS Code window
-
+  target=$(find ~/Dev ~/Desktop \(-type f \) 2>/dev/null | fzf) || return 1
   nvim "$target" || return 1
 
 }
 
+#fnvim() {
+#  local target
+#  target=$(find ~ \(-type f \) 2>/dev/null | fzf) || return 1
 
+    # Open the file's directory and the file in a new VS Code window
+
+#  nvim "$target" || return 1
+
+#}
+
+
+bubble() {
+  query="$1"
+  ~/Dev/bubblefind/fsearch.py "$query" \
+    | fzf --ansi --delimiter ':' --nth 3.. \
+          --preview 'f={1}; l={2}; s=$((l-5)); [ $s -lt 1 ] && s=1; e=$((l+5)); bat --style=numbers --color=always --line-range $s:$e --highlight-line $l --paging=never "$f"' \
+    | awk -F: '{print "+"$2, $1}' \
+    | xargs -r nvim
+}
+
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# >>> juliaup initialize >>>
+
+# !! Contents within this block are managed by juliaup !!
+
+case ":$PATH:" in
+    *:/home/thomas/.juliaup/bin:*)
+        ;;
+
+    *)
+        export PATH=/home/thomas/.juliaup/bin${PATH:+:${PATH}}
+        ;;
+esac
+
+# <<< juliaup initialize <<<
